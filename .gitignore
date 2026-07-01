@@ -1,0 +1,14 @@
+# Ignore Node modules
+client/node_modules/
+server/node_modules/
+package-lock.json
+
+# Ignore Python/Django junk
+server/venv/
+server/__pycache__/
+server/*.pyc
+server/db.sqlite3
+
+# Ignore Secrets and Environment
+.env
+.DS_Store
