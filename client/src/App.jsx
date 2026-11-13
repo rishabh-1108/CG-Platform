@@ -19,11 +19,15 @@ import FeaturesPage from './pages/FeaturesPage';
 import HowItWorksPage from './HowItWorksPage';
 import AboutPage from './AboutPage';
 
+// --- IMPORT THE NEW AI MENTOR ---
+import AICareerMentor from './components/AICareerMentor';
+
 // --- ICONS NEEDED FOR TOP NAV ---
 const IconSearch = <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>;
 const IconBell = <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>;
 const IconArrowLeft = <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>;
 const IconChat = <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>;
+const IconClose = <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>;
 
 // --- TOP NAV COMPONENT ---
 const TopNav = () => {
@@ -91,6 +95,7 @@ const TopNav = () => {
 // --- MAIN APP ROUTER ---
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isMentorOpen, setIsMentorOpen] = useState(false); // <-- ADDED: Controls the chat window
 
   return (
     <Router>
@@ -110,7 +115,7 @@ function App() {
         .btn-primary { background-color: #0ea5e9; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; transition: background 0.2s; }
         .btn-primary:hover { background-color: #0284c7; }
         
-        .fab { position: fixed; bottom: 32px; right: 32px; width: 64px; height: 64px; background-color: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; border: none; cursor: pointer; box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4); z-index: 100; transition: transform 0.2s; }
+        .fab { position: fixed; bottom: 32px; right: 32px; width: 64px; height: 64px; background-color: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; border: none; cursor: pointer; box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4); z-index: 10000; transition: all 0.2s; }
         .fab:hover { transform: scale(1.05); }
       `}</style>
 
@@ -138,10 +143,27 @@ function App() {
         <Route path="/settings" element={<SettingsPage />} />
       </Routes>
 
-      {/* FLOATING ACTION BUTTON ROUTING */}
+      {/* FLOATING ACTION BUTTON & AI MENTOR ROUTING */}
       <Routes>
         {['/dashboard', '/assessment', '/skills', '/opportunities', '/tasks', '/articles', '/profile', '/settings'].map(path => (
-          <Route key={path} path={path} element={<button className="fab">{IconChat}</button>} />
+          <Route key={path} path={path} element={
+            <div style={{ position: 'fixed', bottom: '0', right: '0', zIndex: 9999 }}>
+              {/* Show the chat window if open */}
+              {isMentorOpen && (
+                <div style={{ position: 'fixed', bottom: '110px', right: '32px', zIndex: 9999 }}>
+                  <AICareerMentor />
+                </div>
+              )}
+              {/* Toggle Button */}
+              <button 
+                className="fab" 
+                onClick={() => setIsMentorOpen(!isMentorOpen)}
+                style={{ backgroundColor: isMentorOpen ? '#ef4444' : '#2563eb' }}
+              >
+                {isMentorOpen ? IconClose : IconChat}
+              </button>
+            </div>
+          } />
         ))}
       </Routes>
     </Router>

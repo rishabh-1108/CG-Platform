@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Footer from '../components/Footer';
 
 export const SettingsPage = () => {
   const [activeSub, setActiveSub] = useState('Account');
@@ -69,6 +70,7 @@ export const SettingsPage = () => {
           )}
         </div>
       </div>
+      <Footer />
     </main>
   );
 };

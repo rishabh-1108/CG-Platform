@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const IconTarget = <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>;
 const IconZap = <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>;
@@ -30,52 +30,87 @@ const navItems = [
 ];
 
 export const DashboardHome = ({ onLogout }) => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('Assessment');
 
   return (
-    <main style={{ padding: '32px', maxWidth: '1440px', margin: '0 auto', boxSizing: 'border-box' }}>
+    <div className="dashboard-container">
       <style>{`
-        .hero-card { background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%); border-radius: 24px; padding: 40px; box-shadow: 0 10px 30px -10px rgba(14, 165, 233, 0.15); margin-bottom: 48px; }
+        /* Dynamic Cosmic Glass Background */
+        .dashboard-container {
+          min-height: 100vh;
+          padding: 32px;
+          background: linear-gradient(135deg, #ccfbf1 0%, #d1fae5 40%, #bae6fd 70%, #e0f2fe 100%);
+          background-size: 400% 400%;
+          animation: cosmicGradient 15s ease infinite;
+          font-family: 'Inter', sans-serif;
+          position: relative;
+          overflow-x: hidden;
+          box-sizing: border-box;
+        }
+        @keyframes cosmicGradient {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+
+        /* Glassmorphism Classes */
+        .glass-panel {
+          background: rgba(255, 255, 255, 0.55);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 255, 255, 0.9);
+          position: relative;
+          z-index: 1;
+        }
+
+        /* Layout overrides */
+        .content-wrapper {
+          max-width: 1440px; 
+          margin: 0 auto; 
+        }
+
+        .hero-card { border-radius: 24px; padding: 40px; box-shadow: 0 10px 30px -10px rgba(14, 165, 233, 0.15); margin-bottom: 48px; }
         .hero-content { display: flex; gap: 40px; align-items: center; }
         .hero-text-area { flex: 1.2; text-align: left; }
         .hero-image-box { flex: 1; height: 360px; border-radius: 24px; overflow: hidden; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.15); }
         .hero-image-box img { width: 100%; height: 100%; object-fit: cover; }
         
         .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 48px; }
-        .stat-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 28px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02); transition: transform 0.2s; }
-        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); }
+        .stat-card { border-radius: 16px; padding: 28px; transition: transform 0.2s; }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); background: rgba(255, 255, 255, 0.75); }
         .stat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .stat-title { font-size: 15px; color: #64748b; font-weight: 600; }
         .stat-icon { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 8px; }
         .stat-value { font-size: 40px; font-weight: 800; color: #1e293b; }
 
         .actions-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 64px; }
-        .action-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px; transition: all 0.2s; cursor: pointer; text-align: left; }
-        .action-card:hover { box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.08); border-color: #cbd5e1; }
+        .action-card { border-radius: 16px; padding: 24px; transition: all 0.2s; cursor: pointer; text-align: left; }
+        .action-card:hover { box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.08); border-color: #cbd5e1; background: rgba(255, 255, 255, 0.75); transform: translateY(-3px); }
         .action-icon { margin-bottom: 16px; }
 
         .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 80px; }
-        .feature-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 32px; text-align: left; transition: box-shadow 0.2s; }
-        .feature-card:hover { box-shadow: 0 12px 25px -8px rgba(0, 0, 0, 0.08); }
+        .feature-card { border-radius: 16px; padding: 32px; text-align: left; transition: box-shadow 0.2s; }
+        .feature-card:hover { box-shadow: 0 12px 25px -8px rgba(0, 0, 0, 0.08); background: rgba(255, 255, 255, 0.75); }
 
-        .pillar-row { display: flex; align-items: center; gap: 48px; margin-top: 32px; background: #f8fafc; border-radius: 24px; overflow: hidden; border: 1px solid #e2e8f0; }
+        .pillar-row { display: flex; align-items: center; gap: 48px; margin-top: 32px; border-radius: 24px; overflow: hidden; }
         .pillar-row.reverse { flex-direction: row-reverse; }
         .pillar-content { flex: 1; padding: 48px; text-align: left; }
         .pillar-image { flex: 1; min-height: 400px; display: flex; align-items: center; justify-content: center; padding: 24px; }
         .pillar-image img { width: 100%; height: 100%; object-fit: cover; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); }
 
         .video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 32px; }
-        .main-video-card { background: #ffffff; border-radius: 16px; overflow: hidden; border: 1px solid #e2e8f0; display: flex; flex-direction: column; }
+        .main-video-card { border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; }
         .sub-video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-        .video-card { background: #ffffff; border-radius: 16px; overflow: hidden; border: 1px solid #e2e8f0; display: flex; flex-direction: column; }
+        .video-card { border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; }
 
-        .footer { padding: 64px 0 40px; border-top: 1px solid #e2e8f0; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-top: 64px; text-align: left; }
+        .footer { padding: 64px 0 40px; border-top: 1px solid rgba(255,255,255,0.9); display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-top: 64px; text-align: left; }
         .footer-heading { font-weight: 700; color: #1e293b; font-size: 16px; margin-bottom: 24px; }
         .footer-link { display: flex; align-items: center; gap: 8px; color: #64748b; text-decoration: none; margin-bottom: 16px; font-size: 14px; transition: color 0.2s; }
         .footer-link:hover { color: #0ea5e9; }
 
         .c-blue { color: #0ea5e9; } .c-orange { color: #f59e0b; } .c-green { color: #10b981; } .c-purple { color: #8b5cf6; } .c-red { color: #ef4444; } .c-yellow { color: #eab308; }
-        .bg-yellow { background: #fef3c7; } .bg-purple { background: #ede9fe; } .bg-red { background: #ffe4e6; }
+        .bg-yellow { background: rgba(254, 243, 199, 0.7); } .bg-purple { background: rgba(237, 233, 254, 0.7); } .bg-red { background: rgba(255, 228, 230, 0.7); }
         
         .btn-primary { background-color: #0ea5e9; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; transition: background 0.2s; }
         .btn-primary:hover { background-color: #0284c7; }
@@ -88,305 +123,310 @@ export const DashboardHome = ({ onLogout }) => {
         }
       `}</style>
 
-      <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, paddingBottom: '80px' }}>
-        
-        <div className="hero-card">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '48px', width: '100%' }}>
-            <div style={{ display: 'flex', gap: '24px', overflowX: 'auto', whiteSpace: 'nowrap' }}>
-              {navItems.map(item => (
-                <Link to={item.path} key={item.name} style={{ textDecoration: 'none' }}>
-                  <div onClick={() => setActiveTab(item.name)} style={{ padding: '8px 12px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                    <span style={{ color: activeTab === item.name ? '#0ea5e9' : '#64748b' }}>{item.icon}</span>
-                    <span style={{ color: activeTab === item.name ? '#1e293b' : '#64748b', fontWeight: '600', fontSize: '15px' }}>{item.name}</span>
-                  </div>
-                </Link>
-              ))}
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
-              <Link to="/admin" style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#10b981', fontWeight: '600', fontSize: '14px', textDecoration: 'none' }}>
-                {IconShield} Admin
-              </Link>
-              <Link to="/settings" style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#1e293b', fontWeight: '600', fontSize: '14px', textDecoration: 'none' }}>
-                {IconGear} Settings
-              </Link>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'linear-gradient(135deg, #0ea5e9, #10b981)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '16px', fontWeight: '800' }}>R</div>
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontSize: '14px', fontWeight: '800', color: '#1e293b' }}>CG PLATFROM</span>
-                    <Link to="/profile" style={{ textDecoration: 'none' }}>
-                      <span style={{ fontSize: '12px', color: '#64748b', cursor: 'pointer' }}>View Profile →</span>
-                    </Link>
-                  </div>
-                </div>
-                <Link to="/">
-                  <button onClick={onLogout} style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }} title="Sign Out">
-                    {IconLogoutDoor}
-                  </button>
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          <div className="hero-content">
-            <div className="hero-text-area">
-              <div style={{ fontSize: '13px', fontWeight: '700', color: '#64748b', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '16px' }}>ASPIRE, SPEAK & SHINE</div>
-              <h1 style={{ fontSize: '56px', fontWeight: '900', color: '#0ea5e9', margin: '0 0 12px 0', letterSpacing: '-0.02em', lineHeight: '1.1' }}>CG PLATFORM</h1>
-              <div style={{ fontSize: '16px', fontWeight: '700', color: '#10b981', letterSpacing: '0.05em', marginBottom: '40px' }}>DISCOVER • COMMUNICATE • SUCCEED</div>
-              <h2 style={{ fontSize: '32px', fontWeight: '800', color: '#1e293b', margin: '0 0 12px 0' }}>Good Evening, CG PLATFROM! 👋</h2>
-              <p style={{ fontSize: '16px', color: '#64748b', lineHeight: '1.6', maxWidth: '80%', margin: 0 }}>Welcome back to your personalized career guidance journey. Let's make today count!</p>
-            </div>
-            <div className="hero-image-box">
-              <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80" alt="Students collaborating" />
-            </div>
-          </div>
-        </div>
-
-        <div className="stats-row">
-          <div className="stat-card">
-            <div className="stat-header">
-              <span className="stat-title">Assessments Completed</span>
-              <span className="stat-icon c-yellow bg-yellow">{IconTarget}</span>
-            </div>
-            <div className="stat-value">0</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-header">
-              <span className="stat-title">Skills Practiced</span>
-              <span className="stat-icon c-purple bg-purple">{IconZap}</span>
-            </div>
-            <div className="stat-value">0</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-header">
-              <span className="stat-title">Opportunities Viewed</span>
-              <span className="stat-icon c-red bg-red">{IconBriefcase}</span>
-            </div>
-            <div className="stat-value">0</div>
-          </div>
-        </div>
-
-        <div style={{ marginBottom: '24px', textAlign: 'left' }}>
-          <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#1e293b' }}>Quick Actions</h2>
-        </div>
-        <div className="actions-grid">
-          <Link to="/assessment" style={{ textDecoration: 'none', color: 'inherit' }}>
-            <div className="action-card">
-              <div style={{ marginBottom: '16px', color: '#0ea5e9' }}>{IconTargetLarge}</div>
-              <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#1e293b', marginBottom: '8px' }}>Career Assessment</h3>
-              <p style={{ fontSize: '14px', color: '#64748b', margin: 0, lineHeight: '1.5' }}>Discover your ideal career path</p>
-            </div>
-          </Link>
-          <Link to="/skills" style={{ textDecoration: 'none', color: 'inherit' }}>
-            <div className="action-card">
-              <div style={{ marginBottom: '16px', color: '#f59e0b' }}>{IconMessageSquare}</div>
-              <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#1e293b', marginBottom: '8px' }}>Skills Development</h3>
-              <p style={{ fontSize: '14px', color: '#64748b', margin: 0, lineHeight: '1.5' }}>Improve communication skills</p>
-            </div>
-          </Link>
-          <Link to="/opportunities" style={{ textDecoration: 'none', color: 'inherit' }}>
-            <div className="action-card">
-              <div style={{ marginBottom: '16px', color: '#10b981' }}>{IconBriefcase}</div>
-              <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#1e293b', marginBottom: '8px' }}>Career Opportunities</h3>
-              <p style={{ fontSize: '14px', color: '#64748b', margin: 0, lineHeight: '1.5' }}>Find government & private jobs</p>
-            </div>
-          </Link>
-          <Link to="/tasks" style={{ textDecoration: 'none', color: 'inherit' }}>
-            <div className="action-card">
-              <div style={{ marginBottom: '16px', color: '#10b981' }}>{IconBookOpen}</div>
-              <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#1e293b', marginBottom: '8px' }}>My Tasks</h3>
-              <p style={{ fontSize: '14px', color: '#64748b', margin: 0, lineHeight: '1.5' }}>View and manage your tasks</p>
-            </div>
-          </Link>
-        </div>
-
-        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <h2 style={{ fontSize: '32px', fontWeight: '800', color: '#1e293b', margin: '0 0 12px 0' }}>Why Choose <span style={{ color: '#0ea5e9' }}>CG Platform</span>?</h2>
-          <p style={{ fontSize: '16px', color: '#64748b', margin: 0 }}>Your complete career guidance ecosystem powered by AI, designed specifically for Indian students</p>
-        </div>
-        <div className="features-grid">
-          <div className="feature-card">
-            <div style={{ marginBottom: '20px', color: '#eab308' }}>{IconLightbulb}</div>
-            <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b', marginBottom: '12px' }}>AI-Powered Career Discovery</h3>
-            <p style={{ fontSize: '15px', color: '#64748b', margin: 0, lineHeight: '1.6' }}>Get personalized career recommendations based on your interests, skills, and aspirations using advanced AI technology.</p>
-          </div>
-          <div className="feature-card">
-            <div style={{ marginBottom: '20px', color: '#0ea5e9' }}>{IconMessageSquare}</div>
-            <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b', marginBottom: '12px' }}>Communication Skills Mastery</h3>
-            <p style={{ fontSize: '15px', color: '#64748b', margin: 0, lineHeight: '1.6' }}>Practice and improve your speaking, interview, and presentation skills with real-time AI feedback and voice analysis.</p>
-          </div>
-          <div className="feature-card">
-            <div style={{ marginBottom: '20px', color: '#10b981' }}>{IconTrophy}</div>
-            <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b', marginBottom: '12px' }}>Track Your Progress</h3>
-            <p style={{ fontSize: '15px', color: '#64748b', margin: 0, lineHeight: '1.6' }}>Monitor your skill development, complete assessments, and celebrate milestones on your journey to success.</p>
-          </div>
-          <div className="feature-card">
-            <div style={{ marginBottom: '20px', color: '#8b5cf6' }}>{IconBrain}</div>
-            <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b', marginBottom: '12px' }}>Personalized Learning Paths</h3>
-            <p style={{ fontSize: '15px', color: '#64748b', margin: 0, lineHeight: '1.6' }}>Receive customized tasks, assessments, and recommendations tailored to your education level and career goals.</p>
-          </div>
-          <div className="feature-card">
-            <div style={{ marginBottom: '20px', color: '#ef4444' }}>{IconTargetLarge}</div>
-            <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b', marginBottom: '12px' }}>Government & Private Opportunities</h3>
-            <p style={{ fontSize: '15px', color: '#64748b', margin: 0, lineHeight: '1.6' }}>Explore thousands of job opportunities from both government and private sectors matched to your qualifications.</p>
-          </div>
-          <div className="feature-card">
-            <div style={{ marginBottom: '20px', color: '#f59e0b' }}>{IconUsers}</div>
-            <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b', marginBottom: '12px' }}>Build Confidence</h3>
-            <p style={{ fontSize: '15px', color: '#64748b', margin: 0, lineHeight: '1.6' }}>Develop the self-assurance you need to succeed in interviews, group discussions, and your professional career.</p>
-          </div>
-        </div>
-
-        <div style={{ padding: '40px 0 80px' }}>
-          <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-            <h2 style={{ fontSize: '32px', fontWeight: '800', color: '#1e293b', margin: '0 0 12px 0' }}>Our Three Pillars of Success</h2>
-            <p style={{ fontSize: '16px', color: '#64748b', margin: 0 }}>The foundation of your journey: Discover your potential, Communicate with confidence, Succeed in your career</p>
-          </div>
-
-          <div className="pillar-row">
-            <div className="pillar-content">
-              <span style={{ background: '#e0f2fe', color: '#0284c7', padding: '6px 16px', borderRadius: '20px', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', display: 'inline-block', marginBottom: '16px', letterSpacing: '0.05em' }}>Discover</span>
-              <h3 style={{ fontSize: '32px', fontWeight: '800', color: '#1e293b', margin: '0 0 16px 0' }}>DISCOVER</h3>
-              <p style={{ fontSize: '16px', color: '#64748b', lineHeight: '1.6', margin: 0 }}>Explore endless career possibilities tailored to your unique strengths and interests. Our AI-powered platform helps you uncover paths you never knew existed.</p>
-            </div>
-            <div className="pillar-image" style={{ background: 'linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%)' }}>
-               <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80" alt="Discover Career Paths" />
-            </div>
-          </div>
-
-          <div className="pillar-row reverse">
-            <div className="pillar-content">
-              <span style={{ background: '#e0f2fe', color: '#0284c7', padding: '6px 16px', borderRadius: '20px', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', display: 'inline-block', marginBottom: '16px', letterSpacing: '0.05em' }}>Communicate</span>
-              <h3 style={{ fontSize: '32px', fontWeight: '800', color: '#1e293b', margin: '0 0 16px 0' }}>COMMUNICATE</h3>
-              <p style={{ fontSize: '16px', color: '#64748b', lineHeight: '1.6', margin: 0 }}>Master the art of professional communication with AI-driven feedback. Practice interviews, presentations, and discussions to speak with confidence.</p>
-            </div>
-            <div className="pillar-image" style={{ background: 'linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%)' }}>
-               <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&w=800&q=80" alt="Communicate Skills" />
-            </div>
-          </div>
-
-          <div className="pillar-row">
-            <div className="pillar-content">
-              <span style={{ background: '#e0f2fe', color: '#0284c7', padding: '6px 16px', borderRadius: '20px', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', display: 'inline-block', marginBottom: '16px', letterSpacing: '0.05em' }}>Succeed</span>
-              <h3 style={{ fontSize: '32px', fontWeight: '800', color: '#1e293b', margin: '0 0 16px 0' }}>SUCCEED</h3>
-              <p style={{ fontSize: '16px', color: '#64748b', lineHeight: '1.6', margin: 0 }}>Achieve your career dreams with personalized guidance, skill development, and access to thousands of opportunities. Your success story starts here.</p>
-            </div>
-            <div className="pillar-image" style={{ background: 'linear-gradient(135deg, #fef08a 0%, #fde047 100%)' }}>
-               <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80" alt="Succeed Careers" />
-            </div>
-          </div>
-        </div>
-
-        <div style={{ padding: '40px 0 80px' }}>
-          <div style={{ textAlign: 'center', marginBottom: '12px' }}>
-            <h2 style={{ fontSize: '32px', fontWeight: '800', color: '#1e293b', margin: 0 }}>See CG Platform in <span style={{ color: '#0ea5e9' }}>Action</span></h2>
-          </div>
-          <p style={{ fontSize: '16px', color: '#64748b', textAlign: 'center', maxWidth: '600px', margin: '0 auto 48px', lineHeight: '1.6' }}>Watch how our AI-powered platform helps students discover their potential, develop skills, and achieve career success</p>
-
-          <div className="video-grid">
-            <div className="main-video-card">
-              <div style={{ background: '#94a3b8', width: '100%', aspectRatio: '16/9', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
-                 <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80" alt="Platform Overview" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: '0.8' }} />
-                 <div style={{ width: '64px', height: '64px', background: '#2563eb', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'absolute', cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}>{IconPlay}</div>
-              </div>
-              <div style={{ padding: '24px', textAlign: 'left' }}>
-                <div style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b', marginBottom: '8px' }}>Complete Platform Walkthrough</div>
-                <div style={{ fontSize: '14px', color: '#64748b', lineHeight: '1.5' }}>Get a comprehensive tour of all features including AI assessments, skill development, and career opportunities.</div>
-              </div>
-            </div>
-
-            <div className="sub-video-grid">
-              <div className="video-card">
-                <div style={{ background: '#94a3b8', width: '100%', aspectRatio: '16/9', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
-                   <div style={{ width: '48px', height: '48px', background: '#2563eb', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'absolute', cursor: 'pointer' }}>{IconPlay}</div>
-                </div>
-                <div style={{ padding: '24px', textAlign: 'left' }}>
-                  <div style={{ fontSize: '15px', fontWeight: '700', color: '#1e293b', marginBottom: '8px' }}>AI Career Assessment</div>
-                  <div style={{ fontSize: '12px', color: '#64748b', lineHeight: '1.5' }}>See personalized recommendations</div>
-                </div>
-              </div>
-              <div className="video-card">
-                <div style={{ background: '#94a3b8', width: '100%', aspectRatio: '16/9', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
-                   <div style={{ width: '48px', height: '48px', background: '#2563eb', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'absolute', cursor: 'pointer' }}>{IconPlay}</div>
-                </div>
-                <div style={{ padding: '24px', textAlign: 'left' }}>
-                  <div style={{ fontSize: '15px', fontWeight: '700', color: '#1e293b', marginBottom: '8px' }}>Voice Skills Practice</div>
-                  <div style={{ fontSize: '12px', color: '#64748b', lineHeight: '1.5' }}>Real-time feedback demo</div>
-                </div>
-              </div>
-              <div className="video-card">
-                <div style={{ background: '#94a3b8', width: '100%', aspectRatio: '16/9', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
-                   <div style={{ width: '48px', height: '48px', background: '#2563eb', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'absolute', cursor: 'pointer' }}>{IconPlay}</div>
-                </div>
-                <div style={{ padding: '24px', textAlign: 'left' }}>
-                  <div style={{ fontSize: '15px', fontWeight: '700', color: '#1e293b', marginBottom: '8px' }}>Job Matching</div>
-                  <div style={{ fontSize: '12px', color: '#64748b', lineHeight: '1.5' }}>Smart opportunity discovery</div>
-                </div>
-              </div>
-              <div className="video-card">
-                <div style={{ background: '#94a3b8', width: '100%', aspectRatio: '16/9', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
-                   <div style={{ width: '48px', height: '48px', background: '#2563eb', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'absolute', cursor: 'pointer' }}>{IconPlay}</div>
-                </div>
-                <div style={{ padding: '24px', textAlign: 'left' }}>
-                  <div style={{ fontSize: '15px', fontWeight: '700', color: '#1e293b', marginBottom: '8px' }}>Progress Tracking</div>
-                  <div style={{ fontSize: '12px', color: '#64748b', lineHeight: '1.5' }}>Monitor your growth</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div style={{ margin: '40px 0 80px' }}>
-          <div style={{ fontStyle: 'italic', fontSize: '14px', color: '#64748b', textAlign: 'center', marginBottom: '24px', padding: '16px', background: '#f8fafc', borderRadius: '8px', border: '1px dashed #cbd5e1' }}>
-            💡 <strong>Note:</strong> Demo videos with audio will be embedded here. The platform supports MP4, WebM, and other standard video formats with full audio playback.
-          </div>
-          <div style={{ border: '1px solid #e2e8f0', borderRadius: '16px', padding: '64px', textAlign: 'center', background: '#ffffff', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
-            <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#1e293b', marginBottom: '16px' }}>Recent Activity</h3>
-            <p style={{ fontSize: '15px', color: '#64748b', marginBottom: '24px' }}>No recent activity yet. Start by taking a career assessment!</p>
-            <Link to="/assessment"><button className="btn-primary">Get Started</button></Link>
-          </div>
-        </div>
-
-        <footer className="footer">
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-              <div style={{ width: '36px', height: '36px', backgroundColor: '#0ea5e9', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-              </div>
-              <div>
-                <div style={{ fontSize: '11px', color: '#64748b', fontWeight: '700', letterSpacing: '0.05em' }}>ASPIRE, SPEAK & SHINE</div>
-                <div style={{ fontSize: '19px', color: '#10b981', fontWeight: '900', letterSpacing: '-0.02em' }}>CG PLATFORM</div>
-              </div>
-            </div>
-            <p style={{ fontSize: '14px', color: '#64748b', lineHeight: '1.6', maxWidth: '300px' }}>Empowering students with AI-powered career guidance, communication skills, and confidence building.</p>
-          </div>
+      <div className="content-wrapper">
+        <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, paddingBottom: '80px' }}>
           
-          <div>
-            <div className="footer-heading">Quick Links</div>
-            <Link to="/assessment" className="footer-link">Career Assessment</Link>
-            <Link to="/skills" className="footer-link">Skills Development</Link>
-            <Link to="/opportunities" className="footer-link">Career Opportunities</Link>
-            <Link to="/tasks" className="footer-link">My Tasks</Link>
+          <div className="hero-card glass-panel">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '48px', width: '100%' }}>
+              <div style={{ display: 'flex', gap: '24px', overflowX: 'auto', whiteSpace: 'nowrap' }}>
+                {navItems.map(item => (
+                  <Link to={item.path} key={item.name} style={{ textDecoration: 'none' }}>
+                    <div onClick={() => setActiveTab(item.name)} style={{ padding: '8px 12px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                      <span style={{ color: activeTab === item.name ? '#0ea5e9' : '#64748b' }}>{item.icon}</span>
+                      <span style={{ color: activeTab === item.name ? '#1e293b' : '#64748b', fontWeight: '600', fontSize: '15px' }}>{item.name}</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
+                <Link to="/admin" style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#10b981', fontWeight: '600', fontSize: '14px', textDecoration: 'none' }}>
+                  {IconShield} Admin
+                </Link>
+                <Link to="/settings" style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#1e293b', fontWeight: '600', fontSize: '14px', textDecoration: 'none' }}>
+                  {IconGear} Settings
+                </Link>
+                
+                {/* Visual Separator */}
+                <div style={{ width: '1px', height: '24px', background: 'rgba(0,0,0,0.1)' }}></div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'linear-gradient(135deg, #0ea5e9, #10b981)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '16px', fontWeight: '800' }}>R</div>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <span style={{ fontSize: '14px', fontWeight: '800', color: '#1e293b' }}>CG PLATFROM</span>
+                      <Link to="/profile" style={{ textDecoration: 'none' }}>
+                        <span style={{ fontSize: '12px', color: '#64748b', cursor: 'pointer' }}>View Profile →</span>
+                      </Link>
+                    </div>
+                  </div>
+                  <Link to="/">
+                    <button onClick={onLogout} style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }} title="Sign Out">
+                      {IconLogoutDoor}
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            <div className="hero-content">
+              <div className="hero-text-area">
+                <div style={{ fontSize: '13px', fontWeight: '700', color: '#64748b', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '16px' }}>ASPIRE, SPEAK & SHINE</div>
+                <h1 style={{ fontSize: '56px', fontWeight: '900', color: '#0ea5e9', margin: '0 0 12px 0', letterSpacing: '-0.02em', lineHeight: '1.1' }}>CG PLATFORM</h1>
+                <div style={{ fontSize: '16px', fontWeight: '700', color: '#10b981', letterSpacing: '0.05em', marginBottom: '40px' }}>DISCOVER • COMMUNICATE • SUCCEED</div>
+                <h2 style={{ fontSize: '32px', fontWeight: '800', color: '#1e293b', margin: '0 0 12px 0' }}>Good Evening, CG PLATFROM! 👋</h2>
+                <p style={{ fontSize: '16px', color: '#64748b', lineHeight: '1.6', maxWidth: '80%', margin: 0 }}>Welcome back to your personalized career guidance journey. Let's make today count!</p>
+              </div>
+              <div className="hero-image-box">
+                <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80" alt="Students collaborating" />
+              </div>
+            </div>
           </div>
 
-          <div>
-            <div className="footer-heading">Resources</div>
-            <a href="#" className="footer-link">About Us</a>
-            <a href="#" className="footer-link">How It Works</a>
-            <a href="#" className="footer-link">Features</a>
-            <a href="#" className="footer-link">Settings</a>
+          <div className="stats-row">
+            <div className="stat-card glass-panel">
+              <div className="stat-header">
+                <span className="stat-title">Assessments Completed</span>
+                <span className="stat-icon c-yellow bg-yellow">{IconTarget}</span>
+              </div>
+              <div className="stat-value">0</div>
+            </div>
+            <div className="stat-card glass-panel">
+              <div className="stat-header">
+                <span className="stat-title">Skills Practiced</span>
+                <span className="stat-icon c-purple bg-purple">{IconZap}</span>
+              </div>
+              <div className="stat-value">0</div>
+            </div>
+            <div className="stat-card glass-panel">
+              <div className="stat-header">
+                <span className="stat-title">Opportunities Viewed</span>
+                <span className="stat-icon c-red bg-red">{IconBriefcase}</span>
+              </div>
+              <div className="stat-value">0</div>
+            </div>
           </div>
 
-          <div>
-            <div className="footer-heading">Contact Us</div>
-            <a href="#" className="footer-link" style={{ gap: '8px' }}>{IconMail} support@cgplatform.com</a>
-            <a href="#" className="footer-link" style={{ gap: '8px' }}>{IconPhone} +91 1800-XXX-XXXX</a>
-            <div className="footer-link" style={{ pointerEvents: 'none', gap: '8px' }}>{IconMapPin} India</div>
+          <div style={{ marginBottom: '24px', textAlign: 'left' }}>
+            <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#1e293b' }}>Quick Actions</h2>
           </div>
-        </footer>
+          <div className="actions-grid">
+            <Link to="/assessment" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <div className="action-card glass-panel">
+                <div style={{ marginBottom: '16px', color: '#0ea5e9' }}>{IconTargetLarge}</div>
+                <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#1e293b', marginBottom: '8px' }}>Career Assessment</h3>
+                <p style={{ fontSize: '14px', color: '#64748b', margin: 0, lineHeight: '1.5' }}>Discover your ideal career path</p>
+              </div>
+            </Link>
+            <Link to="/skills" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <div className="action-card glass-panel">
+                <div style={{ marginBottom: '16px', color: '#f59e0b' }}>{IconMessageSquare}</div>
+                <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#1e293b', marginBottom: '8px' }}>Skills Development</h3>
+                <p style={{ fontSize: '14px', color: '#64748b', margin: 0, lineHeight: '1.5' }}>Improve communication skills</p>
+              </div>
+            </Link>
+            <Link to="/opportunities" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <div className="action-card glass-panel">
+                <div style={{ marginBottom: '16px', color: '#10b981' }}>{IconBriefcase}</div>
+                <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#1e293b', marginBottom: '8px' }}>Career Opportunities</h3>
+                <p style={{ fontSize: '14px', color: '#64748b', margin: 0, lineHeight: '1.5' }}>Find government & private jobs</p>
+              </div>
+            </Link>
+            <Link to="/tasks" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <div className="action-card glass-panel">
+                <div style={{ marginBottom: '16px', color: '#10b981' }}>{IconBookOpen}</div>
+                <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#1e293b', marginBottom: '8px' }}>My Tasks</h3>
+                <p style={{ fontSize: '14px', color: '#64748b', margin: 0, lineHeight: '1.5' }}>View and manage your tasks</p>
+              </div>
+            </Link>
+          </div>
 
+          <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+            <h2 style={{ fontSize: '32px', fontWeight: '800', color: '#1e293b', margin: '0 0 12px 0' }}>Why Choose <span style={{ color: '#0ea5e9' }}>CG Platform</span>?</h2>
+            <p style={{ fontSize: '16px', color: '#64748b', margin: 0 }}>Your complete career guidance ecosystem powered by AI, designed specifically for Indian students</p>
+          </div>
+          <div className="features-grid">
+            <div className="feature-card glass-panel">
+              <div style={{ marginBottom: '20px', color: '#eab308' }}>{IconLightbulb}</div>
+              <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b', marginBottom: '12px' }}>AI-Powered Career Discovery</h3>
+              <p style={{ fontSize: '15px', color: '#64748b', margin: 0, lineHeight: '1.6' }}>Get personalized career recommendations based on your interests, skills, and aspirations using advanced AI technology.</p>
+            </div>
+            <div className="feature-card glass-panel">
+              <div style={{ marginBottom: '20px', color: '#0ea5e9' }}>{IconMessageSquare}</div>
+              <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b', marginBottom: '12px' }}>Communication Skills Mastery</h3>
+              <p style={{ fontSize: '15px', color: '#64748b', margin: 0, lineHeight: '1.6' }}>Practice and improve your speaking, interview, and presentation skills with real-time AI feedback and voice analysis.</p>
+            </div>
+            <div className="feature-card glass-panel">
+              <div style={{ marginBottom: '20px', color: '#10b981' }}>{IconTrophy}</div>
+              <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b', marginBottom: '12px' }}>Track Your Progress</h3>
+              <p style={{ fontSize: '15px', color: '#64748b', margin: 0, lineHeight: '1.6' }}>Monitor your skill development, complete assessments, and celebrate milestones on your journey to success.</p>
+            </div>
+            <div className="feature-card glass-panel">
+              <div style={{ marginBottom: '20px', color: '#8b5cf6' }}>{IconBrain}</div>
+              <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b', marginBottom: '12px' }}>Personalized Learning Paths</h3>
+              <p style={{ fontSize: '15px', color: '#64748b', margin: 0, lineHeight: '1.6' }}>Receive customized tasks, assessments, and recommendations tailored to your education level and career goals.</p>
+            </div>
+            <div className="feature-card glass-panel">
+              <div style={{ marginBottom: '20px', color: '#ef4444' }}>{IconTargetLarge}</div>
+              <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b', marginBottom: '12px' }}>Government & Private Opportunities</h3>
+              <p style={{ fontSize: '15px', color: '#64748b', margin: 0, lineHeight: '1.6' }}>Explore thousands of job opportunities from both government and private sectors matched to your qualifications.</p>
+            </div>
+            <div className="feature-card glass-panel">
+              <div style={{ marginBottom: '20px', color: '#f59e0b' }}>{IconUsers}</div>
+              <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b', marginBottom: '12px' }}>Build Confidence</h3>
+              <p style={{ fontSize: '15px', color: '#64748b', margin: 0, lineHeight: '1.6' }}>Develop the self-assurance you need to succeed in interviews, group discussions, and your professional career.</p>
+            </div>
+          </div>
+
+          <div style={{ padding: '40px 0 80px' }}>
+            <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+              <h2 style={{ fontSize: '32px', fontWeight: '800', color: '#1e293b', margin: '0 0 12px 0' }}>Our Three Pillars of Success</h2>
+              <p style={{ fontSize: '16px', color: '#64748b', margin: 0 }}>The foundation of your journey: Discover your potential, Communicate with confidence, Succeed in your career</p>
+            </div>
+
+            <div className="pillar-row glass-panel">
+              <div className="pillar-content">
+                <span style={{ background: 'rgba(224, 242, 254, 0.7)', color: '#0284c7', padding: '6px 16px', borderRadius: '20px', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', display: 'inline-block', marginBottom: '16px', letterSpacing: '0.05em' }}>Discover</span>
+                <h3 style={{ fontSize: '32px', fontWeight: '800', color: '#1e293b', margin: '0 0 16px 0' }}>DISCOVER</h3>
+                <p style={{ fontSize: '16px', color: '#64748b', lineHeight: '1.6', margin: 0 }}>Explore endless career possibilities tailored to your unique strengths and interests. Our AI-powered platform helps you uncover paths you never knew existed.</p>
+              </div>
+              <div className="pillar-image" style={{ background: 'linear-gradient(135deg, rgba(224, 231, 255, 0.7) 0%, rgba(199, 210, 254, 0.7) 100%)' }}>
+                 <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80" alt="Discover Career Paths" />
+              </div>
+            </div>
+
+            <div className="pillar-row reverse glass-panel">
+              <div className="pillar-content">
+                <span style={{ background: 'rgba(224, 242, 254, 0.7)', color: '#0284c7', padding: '6px 16px', borderRadius: '20px', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', display: 'inline-block', marginBottom: '16px', letterSpacing: '0.05em' }}>Communicate</span>
+                <h3 style={{ fontSize: '32px', fontWeight: '800', color: '#1e293b', margin: '0 0 16px 0' }}>COMMUNICATE</h3>
+                <p style={{ fontSize: '16px', color: '#64748b', lineHeight: '1.6', margin: 0 }}>Master the art of professional communication with AI-driven feedback. Practice interviews, presentations, and discussions to speak with confidence.</p>
+              </div>
+              <div className="pillar-image" style={{ background: 'linear-gradient(135deg, rgba(220, 252, 231, 0.7) 0%, rgba(187, 247, 208, 0.7) 100%)' }}>
+                 <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&w=800&q=80" alt="Communicate Skills" />
+              </div>
+            </div>
+
+            <div className="pillar-row glass-panel">
+              <div className="pillar-content">
+                <span style={{ background: 'rgba(224, 242, 254, 0.7)', color: '#0284c7', padding: '6px 16px', borderRadius: '20px', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', display: 'inline-block', marginBottom: '16px', letterSpacing: '0.05em' }}>Succeed</span>
+                <h3 style={{ fontSize: '32px', fontWeight: '800', color: '#1e293b', margin: '0 0 16px 0' }}>SUCCEED</h3>
+                <p style={{ fontSize: '16px', color: '#64748b', lineHeight: '1.6', margin: 0 }}>Achieve your career dreams with personalized guidance, skill development, and access to thousands of opportunities. Your success story starts here.</p>
+              </div>
+              <div className="pillar-image" style={{ background: 'linear-gradient(135deg, rgba(254, 240, 138, 0.7) 0%, rgba(253, 224, 71, 0.7) 100%)' }}>
+                 <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80" alt="Succeed Careers" />
+              </div>
+            </div>
+          </div>
+
+          <div style={{ padding: '40px 0 80px' }}>
+            <div style={{ textAlign: 'center', marginBottom: '12px' }}>
+              <h2 style={{ fontSize: '32px', fontWeight: '800', color: '#1e293b', margin: 0 }}>See CG Platform in <span style={{ color: '#0ea5e9' }}>Action</span></h2>
+            </div>
+            <p style={{ fontSize: '16px', color: '#64748b', textAlign: 'center', maxWidth: '600px', margin: '0 auto 48px', lineHeight: '1.6' }}>Watch how our AI-powered platform helps students discover their potential, develop skills, and achieve career success</p>
+
+            <div className="video-grid">
+              <div className="main-video-card glass-panel">
+                <div style={{ background: '#94a3b8', width: '100%', aspectRatio: '16/9', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
+                   <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80" alt="Platform Overview" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: '0.8' }} />
+                   <div style={{ width: '64px', height: '64px', background: '#2563eb', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'absolute', cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}>{IconPlay}</div>
+                </div>
+                <div style={{ padding: '24px', textAlign: 'left' }}>
+                  <div style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b', marginBottom: '8px' }}>Complete Platform Walkthrough</div>
+                  <div style={{ fontSize: '14px', color: '#64748b', lineHeight: '1.5' }}>Get a comprehensive tour of all features including AI assessments, skill development, and career opportunities.</div>
+                </div>
+              </div>
+
+              <div className="sub-video-grid">
+                <div className="video-card glass-panel">
+                  <div style={{ background: '#94a3b8', width: '100%', aspectRatio: '16/9', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
+                     <div style={{ width: '48px', height: '48px', background: '#2563eb', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'absolute', cursor: 'pointer' }}>{IconPlay}</div>
+                  </div>
+                  <div style={{ padding: '24px', textAlign: 'left' }}>
+                    <div style={{ fontSize: '15px', fontWeight: '700', color: '#1e293b', marginBottom: '8px' }}>AI Career Assessment</div>
+                    <div style={{ fontSize: '12px', color: '#64748b', lineHeight: '1.5' }}>See personalized recommendations</div>
+                  </div>
+                </div>
+                <div className="video-card glass-panel">
+                  <div style={{ background: '#94a3b8', width: '100%', aspectRatio: '16/9', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
+                     <div style={{ width: '48px', height: '48px', background: '#2563eb', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'absolute', cursor: 'pointer' }}>{IconPlay}</div>
+                  </div>
+                  <div style={{ padding: '24px', textAlign: 'left' }}>
+                    <div style={{ fontSize: '15px', fontWeight: '700', color: '#1e293b', marginBottom: '8px' }}>Voice Skills Practice</div>
+                    <div style={{ fontSize: '12px', color: '#64748b', lineHeight: '1.5' }}>Real-time feedback demo</div>
+                  </div>
+                </div>
+                <div className="video-card glass-panel">
+                  <div style={{ background: '#94a3b8', width: '100%', aspectRatio: '16/9', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
+                     <div style={{ width: '48px', height: '48px', background: '#2563eb', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'absolute', cursor: 'pointer' }}>{IconPlay}</div>
+                  </div>
+                  <div style={{ padding: '24px', textAlign: 'left' }}>
+                    <div style={{ fontSize: '15px', fontWeight: '700', color: '#1e293b', marginBottom: '8px' }}>Job Matching</div>
+                    <div style={{ fontSize: '12px', color: '#64748b', lineHeight: '1.5' }}>Smart opportunity discovery</div>
+                  </div>
+                </div>
+                <div className="video-card glass-panel">
+                  <div style={{ background: '#94a3b8', width: '100%', aspectRatio: '16/9', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
+                     <div style={{ width: '48px', height: '48px', background: '#2563eb', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'absolute', cursor: 'pointer' }}>{IconPlay}</div>
+                  </div>
+                  <div style={{ padding: '24px', textAlign: 'left' }}>
+                    <div style={{ fontSize: '15px', fontWeight: '700', color: '#1e293b', marginBottom: '8px' }}>Progress Tracking</div>
+                    <div style={{ fontSize: '12px', color: '#64748b', lineHeight: '1.5' }}>Monitor your growth</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ margin: '40px 0 80px' }}>
+            <div style={{ fontStyle: 'italic', fontSize: '14px', color: '#64748b', textAlign: 'center', marginBottom: '24px', padding: '16px', background: 'rgba(255, 255, 255, 0.4)', borderRadius: '8px', border: '1px dashed rgba(255, 255, 255, 0.9)' }}>
+              💡 <strong>Note:</strong> Demo videos with audio will be embedded here. The platform supports MP4, WebM, and other standard video formats with full audio playback.
+            </div>
+            <div className="glass-panel" style={{ borderRadius: '16px', padding: '64px', textAlign: 'center' }}>
+              <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#1e293b', marginBottom: '16px' }}>Recent Activity</h3>
+              <p style={{ fontSize: '15px', color: '#64748b', marginBottom: '24px' }}>No recent activity yet. Start by taking a career assessment!</p>
+              <Link to="/assessment"><button className="btn-primary">Get Started</button></Link>
+            </div>
+          </div>
+
+          <footer className="footer">
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                <div style={{ width: '36px', height: '36px', backgroundColor: '#0ea5e9', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                </div>
+                <div>
+                  <div style={{ fontSize: '11px', color: '#64748b', fontWeight: '700', letterSpacing: '0.05em' }}>ASPIRE, SPEAK & SHINE</div>
+                  <div style={{ fontSize: '19px', color: '#10b981', fontWeight: '900', letterSpacing: '-0.02em' }}>CG PLATFORM</div>
+                </div>
+              </div>
+              <p style={{ fontSize: '14px', color: '#64748b', lineHeight: '1.6', maxWidth: '300px' }}>Empowering students with AI-powered career guidance, communication skills, and confidence building.</p>
+            </div>
+            
+            <div>
+              <div className="footer-heading">Quick Links</div>
+              <Link to="/assessment" className="footer-link">Career Assessment</Link>
+              <Link to="/skills" className="footer-link">Skills Development</Link>
+              <Link to="/opportunities" className="footer-link">Career Opportunities</Link>
+              <Link to="/tasks" className="footer-link">My Tasks</Link>
+            </div>
+
+            <div>
+              <div className="footer-heading">Resources</div>
+              <a href="#" className="footer-link">About Us</a>
+              <a href="#" className="footer-link">How It Works</a>
+              <a href="#" className="footer-link">Features</a>
+              <a href="#" className="footer-link">Settings</a>
+            </div>
+
+            <div>
+              <div className="footer-heading">Contact Us</div>
+              <a href="#" className="footer-link" style={{ gap: '8px' }}>{IconMail} support@cgplatform.com</a>
+              <a href="#" className="footer-link" style={{ gap: '8px' }}>{IconPhone} +91 1800-XXX-XXXX</a>
+              <div className="footer-link" style={{ pointerEvents: 'none', gap: '8px' }}>{IconMapPin} India</div>
+            </div>
+          </footer>
+        </div>
       </div>
-    </main>
+    </div>
   );
 };
